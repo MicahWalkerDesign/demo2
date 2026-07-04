@@ -68,3 +68,20 @@ export function Plus(props: IconProps) {
     </svg>
   );
 }
+
+export function Globe(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3.5 12h17M12 3c2.4 2.5 3.6 5.5 3.6 9S14.4 18.5 12 21M12 3C9.6 5.5 8.4 8.5 8.4 12S9.6 18.5 12 21" />
+    </svg>
+  );
+}
+
+export function ChevronDown(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...base} {...props}>
+      <path d="m7 10 5 5 5-5" />
+    </svg>
+  );
+}

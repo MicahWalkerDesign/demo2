@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { content, type Locale, type MenuKey } from "./content";
+import { fullMenuUi, menuCategories, menuPhotos } from "./menuData";
 import {
   ArrowRight,
+  ChevronDown,
   Clock,
   CloseIcon,
+  Globe,
   MapPin,
   MenuIcon,
   Phone,
@@ -11,6 +14,14 @@ import {
 } from "./icons";
 
 const menuKeys: MenuKey[] = ["migdia", "capSetmana", "grups"];
+const languages: { code: Locale; name: string }[] = [
+  { code: "ca", name: "Català" },
+  { code: "es", name: "Español" },
+  { code: "en", name: "English" },
+  { code: "de", name: "Deutsch" },
+  { code: "fr", name: "Français" },
+  { code: "ru", name: "Русский" },
+];
 const assetUrl = (path: string) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 
@@ -31,41 +42,37 @@ function DiamondRule() {
   );
 }
 
-function ReusMap({ label }: { label: string }) {
-  return (
-    <svg className="reus-map" viewBox="0 0 640 330" role="img" aria-label={label}>
-      <g className="map-lines">
-        <path d="M-20 48 126 92l88-74 91 60 89-53 122 86 152-62" />
-        <path d="M-15 148 92 113l98 49 112-62 95 67 116-27 142 66" />
-        <path d="M-13 261 110 203l86 65 99-82 88 57 118-45 157 69" />
-        <path d="m78-20 7 96 52 104-16 164M221-20l20 97-29 96 44 179M389-20l-26 96 29 105-21 173M542-20l-8 98 32 90-39 186" />
-        <path d="m0 205 68-23 46-72 68-14 57-57M253 332l13-79 91-54 34-80 89-45M475 337l-22-78 75-77 39-104" />
-      </g>
-      <g className="map-labels">
-        <text x="78" y="66">Plaça del Mercadal</text>
-        <text x="462" y="286">Prioral de Sant Pere</text>
-        <text x="408" y="90">Centre de Reus</text>
-      </g>
-      <g className="map-pin" transform="translate(321 160)">
-        <path d="M0 42S-25 18-25-2A25 25 0 0 1 25-2C25 18 0 42 0 42Z" />
-        <circle cx="0" cy="-2" r="7" />
-      </g>
-    </svg>
-  );
-}
-
 export default function App() {
   const [locale, setLocale] = useState<Locale>("ca");
   const [activeMenu, setActiveMenu] = useState<MenuKey>("migdia");
   const [openDetail, setOpenDetail] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const languageRef = useRef<HTMLDivElement>(null);
   const t = content[locale];
   const menu = t.menu.content[activeMenu];
 
   const setLanguage = (nextLocale: Locale) => {
     setLocale(nextLocale);
     document.documentElement.lang = nextLocale;
+    setLanguageOpen(false);
   };
+
+  useEffect(() => {
+    if (!languageOpen) return;
+    const close = (event: PointerEvent) => {
+      if (!languageRef.current?.contains(event.target as Node)) setLanguageOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLanguageOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [languageOpen]);
 
   const closeMobile = () => setMobileOpen(false);
 
@@ -75,23 +82,42 @@ export default function App() {
         <Brand />
         <nav className={mobileOpen ? "main-nav is-open" : "main-nav"} aria-label="Principal">
           <a href="#inici" onClick={closeMobile}>{t.nav.home}</a>
-          <a href="#menus" onClick={closeMobile}>{t.nav.menus}</a>
+          <a href="#carta" onClick={closeMobile}>{t.nav.menus}</a>
           <a href="#la-casa" onClick={closeMobile}>{t.nav.house}</a>
           <a href="#grups" onClick={closeMobile}>{t.nav.groups}</a>
           <a href="#visita" onClick={closeMobile}>{t.nav.visit}</a>
         </nav>
         <div className="header-actions">
-          <div className="language-switch" aria-label="Idioma">
-            {(["ca", "es"] as Locale[]).map((language) => (
-              <button
-                className={locale === language ? "is-active" : ""}
-                key={language}
-                onClick={() => setLanguage(language)}
-                aria-pressed={locale === language}
-              >
-                {language.toUpperCase()}
-              </button>
-            ))}
+          <div className="language-picker" ref={languageRef}>
+            <button
+              className="language-trigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded={languageOpen}
+              aria-label="Language"
+              onClick={() => setLanguageOpen((value) => !value)}
+            >
+              <Globe />
+              <span>{locale.toUpperCase()}</span>
+              <ChevronDown />
+            </button>
+            {languageOpen && (
+              <div className="language-menu" role="listbox" aria-label="Language">
+                {languages.map((language) => (
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={locale === language.code}
+                    className={locale === language.code ? "is-active" : ""}
+                    key={language.code}
+                    onClick={() => setLanguage(language.code)}
+                  >
+                    <span>{language.name}</span>
+                    <small>{language.code.toUpperCase()}</small>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <a className="button button--primary header-reserve" href="tel:+34977773039">
             {t.nav.reserve}
@@ -118,7 +144,7 @@ export default function App() {
             <DiamondRule />
             <p>{t.hero.body}</p>
             <div className="hero-actions">
-              <a className="button button--primary" href="#menus">
+              <a className="button button--primary" href="#carta">
                 {t.hero.menus}
                 <ArrowRight />
               </a>
@@ -172,7 +198,7 @@ export default function App() {
               <ul>
                 {menu.items.map((item) => <li key={item}>{item}</li>)}
               </ul>
-              <a className="text-link" href="tel:+34977773039">
+              <a className="text-link" href="#carta">
                 {t.menu.action}
                 <ArrowRight />
               </a>
@@ -186,7 +212,7 @@ export default function App() {
             <DiamondRule />
             <h2>{t.dishes.title}</h2>
             <p>{t.dishes.body}</p>
-            <a className="button button--outline" href="#menus">
+            <a className="button button--outline" href="#carta">
               {t.dishes.action}
               <ArrowRight />
             </a>
@@ -200,6 +226,51 @@ export default function App() {
                   <i aria-hidden="true" />
                 </figcaption>
               </figure>
+            ))}
+          </div>
+        </section>
+
+        <section className="full-menu section" id="carta">
+          <div className="full-menu-header">
+            <div>
+              <span className="menu-eyebrow">{fullMenuUi.eyebrow[locale]}</span>
+              <h2>{fullMenuUi.title[locale]}</h2>
+            </div>
+            <div>
+              <p>{fullMenuUi.intro[locale]}</p>
+              <small>{fullMenuUi.note[locale]}</small>
+              <a className="text-link" href="tel:+34977773039">
+                {fullMenuUi.call[locale]} <ArrowRight />
+              </a>
+            </div>
+          </div>
+          <div className="menu-categories">
+            {menuCategories.map((category) => (
+              <article className="menu-category" key={category.title.ca}>
+                <h3>{category.title[locale]}</h3>
+                <ol>
+                  {category.dishes.map((dish) => (
+                    <li key={dish.name.ca}>
+                      <strong>{dish.name[locale]}</strong>
+                      <p>{dish.desc[locale]}</p>
+                    </li>
+                  ))}
+                </ol>
+              </article>
+            ))}
+          </div>
+          <div className="menu-photos-header">
+            <h3>{fullMenuUi.photos[locale]}</h3>
+            <span>{fullMenuUi.source[locale]}</span>
+          </div>
+          <div className="menu-photo-rail">
+            {menuPhotos.map((photo) => (
+              <a href={photo.href} target="_blank" rel="noreferrer" key={photo.image}>
+                <figure>
+                  <img src={assetUrl(photo.image)} alt={photo.title[locale]} loading="lazy" />
+                  <figcaption>{photo.title[locale]}</figcaption>
+                </figure>
+              </a>
             ))}
           </div>
         </section>
@@ -289,7 +360,13 @@ export default function App() {
             </div>
           </div>
           <div className="visit-map">
-            <ReusMap label={t.visit.mapAlt} />
+            <iframe
+              title={t.visit.mapAlt}
+              src="https://www.google.com/maps?q=Restaurant%20Casa%20Alejandro%2C%20Carrer%20del%20Batan%203%2C%20Reus&output=embed"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
         </section>
       </main>
@@ -298,7 +375,7 @@ export default function App() {
         <Brand />
         <nav aria-label="Peu de pàgina">
           <a href="#inici">{t.nav.home}</a>
-          <a href="#menus">{t.nav.menus}</a>
+          <a href="#carta">{t.nav.menus}</a>
           <a href="#la-casa">{t.nav.house}</a>
           <a href="#grups">{t.nav.groups}</a>
           <a href="#visita">{t.nav.visit}</a>
