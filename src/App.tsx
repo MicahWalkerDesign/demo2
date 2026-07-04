@@ -212,7 +212,7 @@ export default function App() {
             <DiamondRule />
             <h2>{t.dishes.title}</h2>
             <p>{t.dishes.body}</p>
-            <a className="button button--outline" href="#carta">
+            <a className="button button--outline-light" href="#carta">
               {t.dishes.action}
               <ArrowRight />
             </a>
@@ -222,8 +222,8 @@ export default function App() {
               <figure className={`dish dish--${index + 1}`} key={dish.name}>
                 <img src={assetUrl(dish.image)} alt={dish.alt} loading="lazy" />
                 <figcaption>
+                  <small>{String(index + 1).padStart(2, "0")}</small>
                   <span>{dish.name}</span>
-                  <i aria-hidden="true" />
                 </figcaption>
               </figure>
             ))}
