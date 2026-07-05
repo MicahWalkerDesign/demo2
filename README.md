@@ -9,6 +9,10 @@ npm install
 npm run dev
 ```
 
+Create `.env.local` from `.env.example` and set `VITE_BOOKING_URL` to the
+deployed CasaApp `/reservar` URL before publishing. Website booking links add
+`source=website` automatically.
+
 ## Checks
 
 ```bash
