@@ -25,6 +25,9 @@ const languages: { code: Locale; name: string }[] = [
 const assetUrl = (path: string) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 const menuUrl = assetUrl("carta/");
+const bookingBaseUrl =
+  import.meta.env.VITE_BOOKING_URL ?? "https://casaapp-mu.vercel.app/reservar";
+const bookingUrl = `${bookingBaseUrl}${bookingBaseUrl.includes("?") ? "&" : "?"}source=website`;
 
 function Brand() {
   return (
@@ -126,7 +129,7 @@ export default function App() {
               </div>
             )}
           </div>
-          <a className="button button--primary header-reserve" href="tel:+34977773039">
+          <a className="button button--primary header-reserve" href={bookingUrl}>
             {t.nav.reserve}
           </a>
           <button
@@ -151,13 +154,13 @@ export default function App() {
             <DiamondRule />
             <p>{t.hero.body}</p>
             <div className="hero-actions">
-              <a className="button button--primary" href="#carta">
-                {t.hero.menus}
+              <a className="button button--primary" href={bookingUrl}>
+                {t.nav.reserve}
                 <ArrowRight />
               </a>
-              <a className="button button--outline" href="tel:+34977773039">
-                {t.hero.call}
-                <Phone />
+              <a className="button button--outline" href="#carta">
+                {t.hero.menus}
+                <ArrowRight />
               </a>
             </div>
             <div className="hero-utility">
@@ -210,7 +213,13 @@ export default function App() {
                 <ArrowRight />
               </a>
             </div>
-            <p className="menu-note">{t.menu.phoneNote}</p>
+            <div className="menu-booking-cta">
+              <p className="menu-note">{t.menu.phoneNote}</p>
+              <a className="button button--primary" href={bookingUrl}>
+                {t.nav.reserve}
+                <ArrowRight />
+              </a>
+            </div>
           </div>
         </section>
 
@@ -271,8 +280,8 @@ export default function App() {
           <div className="groups-copy">
             <h2>{t.groups.title}</h2>
             <p>{t.groups.body}</p>
-            <a className="button button--outline" href="tel:+34977773039">
-              {t.groups.action}
+            <a className="button button--outline" href={bookingUrl}>
+              {t.nav.reserve}
               <ArrowRight />
             </a>
             <div className="details-list">
@@ -305,7 +314,7 @@ export default function App() {
               {t.visit.hours.map((line) => <p key={line}>{line}</p>)}
             </div>
             <div className="visit-actions">
-              <a className="button button--gold" href="tel:+34977773039">
+              <a className="button button--gold" href={bookingUrl}>
                 {t.visit.reserve}
                 <ArrowRight />
               </a>
@@ -341,12 +350,17 @@ export default function App() {
           <a href="#la-casa">{t.nav.house}</a>
           <a href="#grups">{t.nav.groups}</a>
           <a href="#visita">{t.nav.visit}</a>
+          <a href={bookingUrl}>{t.nav.reserve}</a>
         </nav>
         <div className="footer-social">
           <a href="https://www.instagram.com/restaurantcasaalejandro/" target="_blank" rel="noreferrer">Instagram</a>
           <a href="https://www.facebook.com/p/Restaurant-Casa-Alejandro-100067520053823/" target="_blank" rel="noreferrer">Facebook</a>
         </div>
       </footer>
+      <a className="mobile-booking-cta" href={bookingUrl}>
+        {t.nav.reserve}
+        <ArrowRight />
+      </a>
     </>
   );
 }
