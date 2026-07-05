@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { content, type Locale, type MenuKey } from "./content";
-import { fullMenuUi, menuCategories, menuPhotos } from "./menuData";
 import { getTodayHours } from "./openingHours";
 import {
   ArrowRight,
@@ -25,6 +24,7 @@ const languages: { code: Locale; name: string }[] = [
 ];
 const assetUrl = (path: string) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+const menuUrl = assetUrl("carta/");
 
 function Brand() {
   return (
@@ -170,7 +170,7 @@ export default function App() {
           </figure>
         </section>
 
-        <section className="menu-section section" id="menus">
+        <section className="menu-section section" id="carta">
           <div className="section-intro section-intro--center">
             <DiamondRule />
             <h2>{t.menu.title}</h2>
@@ -205,7 +205,7 @@ export default function App() {
               <ul>
                 {menu.items.map((item) => <li key={item}>{item}</li>)}
               </ul>
-              <a className="text-link" href="#carta">
+              <a className="text-link" href={menuUrl}>
                 {t.menu.action}
                 <ArrowRight />
               </a>
@@ -219,7 +219,7 @@ export default function App() {
             <DiamondRule />
             <h2>{t.dishes.title}</h2>
             <p>{t.dishes.body}</p>
-            <a className="button button--outline-light" href="#carta">
+            <a className="button button--outline-light" href={menuUrl}>
               {t.dishes.action}
               <ArrowRight />
             </a>
@@ -233,51 +233,6 @@ export default function App() {
                   <span>{dish.name}</span>
                 </figcaption>
               </figure>
-            ))}
-          </div>
-        </section>
-
-        <section className="full-menu section" id="carta">
-          <div className="full-menu-header">
-            <div>
-              <span className="menu-eyebrow">{fullMenuUi.eyebrow[locale]}</span>
-              <h2>{fullMenuUi.title[locale]}</h2>
-            </div>
-            <div>
-              <p>{fullMenuUi.intro[locale]}</p>
-              <small>{fullMenuUi.note[locale]}</small>
-              <a className="text-link" href="tel:+34977773039">
-                {fullMenuUi.call[locale]} <ArrowRight />
-              </a>
-            </div>
-          </div>
-          <div className="menu-categories">
-            {menuCategories.map((category) => (
-              <article className="menu-category" key={category.title.ca}>
-                <h3>{category.title[locale]}</h3>
-                <ol>
-                  {category.dishes.map((dish) => (
-                    <li key={dish.name.ca}>
-                      <strong>{dish.name[locale]}</strong>
-                      <p>{dish.desc[locale]}</p>
-                    </li>
-                  ))}
-                </ol>
-              </article>
-            ))}
-          </div>
-          <div className="menu-photos-header">
-            <h3>{fullMenuUi.photos[locale]}</h3>
-            <span>{fullMenuUi.source[locale]}</span>
-          </div>
-          <div className="menu-photo-rail">
-            {menuPhotos.map((photo) => (
-              <a href={photo.href} target="_blank" rel="noreferrer" key={photo.image}>
-                <figure>
-                  <img src={assetUrl(photo.image)} alt={photo.title[locale]} loading="lazy" />
-                  <figcaption>{photo.title[locale]}</figcaption>
-                </figure>
-              </a>
             ))}
           </div>
         </section>
