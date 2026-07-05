@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { content, type Locale, type MenuKey } from "./content";
 import { fullMenuUi, menuCategories, menuPhotos } from "./menuData";
+import { getTodayHours } from "./openingHours";
 import {
   ArrowRight,
   ChevronDown,
@@ -48,6 +49,7 @@ export default function App() {
   const [openDetail, setOpenDetail] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [now, setNow] = useState(() => new Date());
   const languageRef = useRef<HTMLDivElement>(null);
   const t = content[locale];
   const menu = t.menu.content[activeMenu];
@@ -73,6 +75,11 @@ export default function App() {
       document.removeEventListener("keydown", escape);
     };
   }, [languageOpen]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const closeMobile = () => setMobileOpen(false);
 
@@ -155,7 +162,7 @@ export default function App() {
             </div>
             <div className="hero-utility">
               <span><MapPin />{t.hero.address}</span>
-              <span><Clock />{t.hero.hours}</span>
+              <span><Clock />{getTodayHours(locale, now)}</span>
             </div>
           </div>
           <figure className="hero-media">
