@@ -656,7 +656,8 @@ h3 {
   grid-template-columns: minmax(0, 1.1fr) minmax(22rem, 0.9fr);
   gap: clamp(3rem, 7vw, 8rem);
   align-items: center;
-  background: var(--walnut);
+  border-top: 1px solid rgba(199, 162, 75, 0.72);
+  background: var(--wine-deep);
   color: white;
 }
 
@@ -670,7 +671,7 @@ h3 {
 .history-media small {
   display: block;
   margin-top: 0.8rem;
-  color: #b9afa6;
+  color: #dfcbd0;
   font-size: 0.76rem;
 }
 
@@ -680,7 +681,7 @@ h3 {
 
 .history-copy > p {
   max-width: 36rem;
-  color: #ddd5ca;
+  color: #f0dfe3;
   font-size: 1.1rem;
   line-height: 1.6;
 }
@@ -694,7 +695,7 @@ h3 {
 .history-copy li {
   position: relative;
   padding: 0.8rem 0 0.8rem 2rem;
-  border-bottom: 1px solid rgba(199, 162, 75, 0.45);
+  border-bottom: 1px solid rgba(230, 200, 126, 0.5);
 }
 
 .history-copy li::before {
