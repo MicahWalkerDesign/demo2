@@ -26,7 +26,7 @@ const assetUrl = (path: string) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 const menuUrl = assetUrl("carta/");
 const bookingBaseUrl =
-  import.meta.env.VITE_BOOKING_URL ?? "http://localhost:3000/reservar";
+  import.meta.env.VITE_BOOKING_URL ?? "https://casaapp-mu.vercel.app/reservar";
 const bookingUrl = `${bookingBaseUrl}${bookingBaseUrl.includes("?") ? "&" : "?"}source=website`;
 
 function Brand() {
