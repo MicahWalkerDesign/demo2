@@ -84,6 +84,32 @@ export default function App() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const revealTargets = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    if (!("IntersectionObserver" in window)) {
+      revealTargets.forEach((target) => target.classList.add("is-visible"));
+      return;
+    }
+
+    document.documentElement.classList.add("reveal-ready");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+    );
+
+    revealTargets.forEach((target) => observer.observe(target));
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("reveal-ready");
+    };
+  }, []);
+
   const closeMobile = () => setMobileOpen(false);
 
   return (
@@ -174,12 +200,12 @@ export default function App() {
         </section>
 
         <section className="menu-section section" id="carta">
-          <div className="section-intro section-intro--center">
+          <div className="section-intro section-intro--center" data-reveal>
             <DiamondRule />
             <h2>{t.menu.title}</h2>
             <p>{t.menu.intro}</p>
           </div>
-          <div className="menu-shell">
+          <div className="menu-shell" data-reveal data-reveal-delay="1">
             <div className="menu-tabs" role="tablist" aria-label={t.menu.title}>
               {menuKeys.map((key) => (
                 <button
@@ -196,12 +222,15 @@ export default function App() {
             </div>
             <div
               className="menu-panel"
+              key={activeMenu}
               id={`panel-${activeMenu}`}
               role="tabpanel"
               aria-labelledby={`tab-${activeMenu}`}
             >
               <div>
-                <span className="menu-number">01</span>
+                <span className="menu-number">
+                  {String(menuKeys.indexOf(activeMenu) + 1).padStart(2, "0")}
+                </span>
                 <h3>{menu.heading}</h3>
                 <p>{menu.note}</p>
               </div>
@@ -224,7 +253,7 @@ export default function App() {
         </section>
 
         <section className="dishes-section section">
-          <div className="dishes-copy">
+          <div className="dishes-copy" data-reveal>
             <DiamondRule />
             <h2>{t.dishes.title}</h2>
             <p>{t.dishes.body}</p>
@@ -233,10 +262,12 @@ export default function App() {
               <ArrowRight />
             </a>
           </div>
-          <div className="dishes-gallery">
+          <div className="dishes-gallery" data-reveal data-reveal-delay="1">
             {t.dishes.items.map((dish, index) => (
               <figure className={`dish dish--${index + 1}`} key={dish.name}>
-                <img src={assetUrl(dish.image)} alt={dish.alt} loading="lazy" />
+                <div className="dish-photo">
+                  <img src={assetUrl(dish.image)} alt={dish.alt} loading="lazy" />
+                </div>
                 <figcaption>
                   <small>{String(index + 1).padStart(2, "0")}</small>
                   <span>{dish.name}</span>
@@ -247,7 +278,7 @@ export default function App() {
         </section>
 
         <section className="history-section section" id="la-casa">
-          <div className="history-media">
+          <div className="history-media" data-reveal>
             <img
               src={assetUrl("images/hockey-memory.jpg")}
               alt={t.history.imageAlt}
@@ -255,7 +286,7 @@ export default function App() {
             />
             <small>{t.history.imageNote}</small>
           </div>
-          <div className="history-copy">
+          <div className="history-copy" data-reveal data-reveal-delay="1">
             <h2>{t.history.title}</h2>
             <DiamondRule />
             <p>{t.history.body}</p>
@@ -270,14 +301,14 @@ export default function App() {
         </section>
 
         <section className="groups-section section" id="grups">
-          <figure>
+          <figure data-reveal>
             <img
               src={assetUrl("images/family-table.jpg")}
               alt={t.groups.imageAlt}
               loading="lazy"
             />
           </figure>
-          <div className="groups-copy">
+          <div className="groups-copy" data-reveal data-reveal-delay="1">
             <h2>{t.groups.title}</h2>
             <p>{t.groups.body}</p>
             <a className="button button--outline" href={bookingUrl}>
@@ -297,7 +328,7 @@ export default function App() {
                       <span>{detail.title}</span>
                       <Plus />
                     </button>
-                    <p>{detail.body}</p>
+                    <p aria-hidden={!isOpen}>{detail.body}</p>
                   </div>
                 );
               })}
@@ -306,7 +337,7 @@ export default function App() {
         </section>
 
         <section className="visit-section section" id="visita">
-          <div className="visit-copy">
+          <div className="visit-copy" data-reveal>
             <h2>{t.visit.title}</h2>
             <p className="visit-address"><MapPin />{t.visit.address}</p>
             <div className="hours">
@@ -330,7 +361,7 @@ export default function App() {
               <a className="phone-link" href="tel:+34977773039"><Phone />977 77 30 39</a>
             </div>
           </div>
-          <div className="visit-map">
+          <div className="visit-map" data-reveal data-reveal-delay="1">
             <iframe
               title={t.visit.mapAlt}
               src="https://www.google.com/maps?q=Restaurant%20Casa%20Alejandro%2C%20Carrer%20del%20Batan%203%2C%20Reus&output=embed"
