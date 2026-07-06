@@ -27,7 +27,6 @@ const assetUrl = (path: string) =>
 const menuUrl = assetUrl("carta/");
 const bookingBaseUrl =
   import.meta.env.VITE_BOOKING_URL ?? "https://casaapp-mu.vercel.app/reservar";
-const bookingUrl = `${bookingBaseUrl}${bookingBaseUrl.includes("?") ? "&" : "?"}source=website`;
 
 function Brand() {
   return (
@@ -56,6 +55,7 @@ export default function App() {
   const languageRef = useRef<HTMLDivElement>(null);
   const t = content[locale];
   const menu = t.menu.content[activeMenu];
+  const bookingUrl = `${bookingBaseUrl}${bookingBaseUrl.includes("?") ? "&" : "?"}source=website&lang=${locale}`;
 
   const setLanguage = (nextLocale: Locale) => {
     setLocale(nextLocale);
